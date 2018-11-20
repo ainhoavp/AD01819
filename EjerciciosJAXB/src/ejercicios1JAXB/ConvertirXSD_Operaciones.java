@@ -6,6 +6,7 @@
 package ejercicios1JAXB;
 
 import generated.Articulos;
+import generated.Direccion;
 import generated.PedidoType;
 import java.math.BigDecimal;
 import javax.xml.bind.JAXBElement;
@@ -17,12 +18,30 @@ import javax.xml.datatype.XMLGregorianCalendar;
  */
 public interface ConvertirXSD_Operaciones {
     
-    public abstract JAXBElement unMarshalizar();
+    public abstract JAXBElement unMarshalizar(String paquete, String nombreXML);
     
     public void marshaller();
     
-    public Articulos.Articulo aniadirArticulo(PedidoType pedidoType, String nombreProducto,int cantidad, BigDecimal precio, String comentario, XMLGregorianCalendar fechaEnvio, String codigo);    
+    /**
+     *
+     * @param pedidoType
+     * @param nombreProducto
+     * @param cantidad
+     * @param dia
+     * @param mes
+     * @param anio
+     * @param precio
+     * @param comentario
+     * @param fechaEnvio
+     * @param codigo
+     * @return
+     * @throws MisExcepciones.elArticuloYaExiste
+     */
+    public Articulos.Articulo aniadirArticulo(PedidoType pedidoType, String nombreProducto,int cantidad, int dia, int mes, int anio, BigDecimal precio, String comentario, XMLGregorianCalendar fechaEnvio, String codigo) throws Excepciones.MisExcepciones.ElArticuloYaExiste, Excepciones.MisExcepciones.FechaInvalida;
     
-    public void modificarDireccion(PedidoType pedidoType, String nombre, String calle, String ciudad, String provincia, BigDecimal codigoPostal, String pais);
+    public Direccion modificarDireccion(PedidoType pedidoType, String nombre, String calle, String ciudad, String provincia, BigDecimal codigoPostal, String pais) throws Excepciones.MisExcepciones.LaDireccionYaExiste;
     
+    public double calcularPrecioArticulo(PedidoType pedidoType) throws Excepciones.MisExcepciones.NoHayPedidos;
+    
+    public boolean borrarArticulo(PedidoType pedidoType, String nombre) throws Excepciones.MisExcepciones.NoHayProductoQueBorrar;
 }
