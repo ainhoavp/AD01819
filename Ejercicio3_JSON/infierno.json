@@ -1,0 +1,64 @@
+[{
+        "apellidos": [[{
+                    "apellido1": "String",
+                    "apellido2": "String"
+                }]],
+        "direccion": [{
+                "calle": "String",
+                "numero": "String",
+                "piso": 0,
+                "escalera": "c",
+                "cp": 0,
+                "ciudad": "String"
+            }, {
+                "calle": "String",
+                "numero": "String",
+                "piso": 0,
+                "escalera": "a",
+                "cp": 0,
+                "ciudad": "String"
+            }],
+        "telefono": "677347479"
+    }, {
+        "apellidos": [[{
+                    "apellido1": "String",
+                    "apellido2": "String"
+                }]],
+        "direccion": [{
+                "calle": "String",
+                "numero": "String",
+                "piso": 0,
+                "escalera": "a",
+                "cp": 0,
+                "ciudad": "String"
+            }, {
+                "calle": "String",
+                "numero": "String",
+                "piso": 0,
+                "escalera": "c",
+                "cp": 0,
+                "ciudad": "String"
+            }],
+        "telefono": "699835856"
+    }, {
+        "apellidos": [[{
+                    "apellido1": "String",
+                    "apellido2": "String"
+                }]],
+        "direccion": [{
+                "calle": "String",
+                "numero": "String",
+                "piso": 0,
+                "escalera": "a",
+                "cp": 0,
+                "ciudad": "String"
+            }, {
+                "calle": "String",
+                "numero": "String",
+                "piso": 0,
+                "escalera": "c",
+                "cp": 0,
+                "ciudad": "String"
+            }],
+        "telefono": "636802970"
+    }]

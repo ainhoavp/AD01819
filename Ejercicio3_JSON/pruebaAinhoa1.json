@@ -1,0 +1,43 @@
+[{
+        "apellidos": [[{
+                    "apellido1": "valle",
+                    "apellido2": "pardo"
+                }]],
+        "direccion": [{
+                "calle": "prueba1",
+                "numero": "49",
+                "piso": 3,
+                "escalera": "a",
+                "cp": 33207,
+                "ciudad": "gijon"
+            }, {
+                "calle": "prueba2",
+                "numero": "50",
+                "piso": 4,
+                "escalera": "b",
+                "cp": 33208,
+                "ciudad": "Oviedo"
+            }],
+        "telefono": "677347479"
+    }, {
+        "apellidos": [[{
+                    "apellido1": "valle2",
+                    "apellido2": "pardo"
+                }]],
+        "direccion": [{
+                "calle": "prueba2",
+                "numero": "49",
+                "piso": 3,
+                "escalera": "a",
+                "cp": 33207,
+                "ciudad": "gijon2"
+            }, {
+                "calle": "prueba2",
+                "numero": "50",
+                "piso": 4,
+                "escalera": "b",
+                "cp": 33208,
+                "ciudad": "Oviedo2"
+            }],
+        "telefono": "677347479"
+    }]

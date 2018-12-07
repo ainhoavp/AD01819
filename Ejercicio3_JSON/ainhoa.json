@@ -1,0 +1,22 @@
+{
+    "apellidos": [{
+            "apellido1": "Garcia",
+            "apellido2": "Gonzalez"
+        }],
+    "direccion": [{
+            "calle": "Schulz",
+            "numero": "49",
+            "piso": 49,
+            "escalera": "a",
+            "codigoPostal": 33208,
+            "ciudad": "Gijon"
+        }, {
+            "calle": "San Jose",
+            "numero": "2",
+            "piso": 6,
+            "escalera": "b",
+            "codigoPostal": 33209,
+            "ciudad": "Gijon"
+        }],
+    "telefono": "677347479"
+}
