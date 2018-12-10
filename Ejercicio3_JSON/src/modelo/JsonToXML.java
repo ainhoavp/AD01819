@@ -1,23 +1,25 @@
 package modelo;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonWriter;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.transform.stream.StreamSource;
 import jaxb.clientes.Clientes;
+import jaxb.clientes.Clientes.Cliente;
+import jaxb.clientes.TipoDireccion;
 
 /**
  *
@@ -25,97 +27,60 @@ import jaxb.clientes.Clientes;
  */
 public class JsonToXML {
 
-    //esta clase es una especia de milagro divino y ¡FUNCIONA!
-    private JAXBElement jaxbElement = null;
-    private javax.xml.bind.JAXBContext jaxbCtx = null;
-    private Marshaller m = null;
+    //*1º binding del xsd para tener mapeadas las clases.
+    //Clientes clientes = new Clientes();
+    //*2º Leer el Json:***********************************************************
+    //*3º "Extraer la información del Json para poder "meterla" en las clases correspondientes para el XML
+    public void JsonToXML(String documentoJson, String paquete, String xml) throws FileNotFoundException {
 
-    public JAXBElement unmarshalizar(File documentoXML, String nombrePaqueteDeLasClasesGeneradasPorElXML) {
-        try {
-            jaxbCtx = javax.xml.bind.JAXBContext.newInstance(nombrePaqueteDeLasClasesGeneradasPorElXML);
-            javax.xml.bind.Unmarshaller unmarshaller = jaxbCtx.createUnmarshaller();
-            jaxbElement = (JAXBElement) unmarshaller.unmarshal(new StreamSource(new java.io.File(documentoXML.toString())), Clientes.class);
-            Clientes clientes = new Clientes();
-            clientes = (Clientes) jaxbElement.getValue();
-        } catch (javax.xml.bind.JAXBException ex) {
-            // XXXTODO Handle exception
-            java.util.logging.Logger.getLogger("global").log(java.util.logging.Level.SEVERE, null, ex);
+        //-1º creamos el array donde quiero guardar los datos del Json:
+        JsonReader reader;
+        JsonArray arrayJsonLeido = null;
+
+        //1º leemos el json:
+        FileReader archivoAleer = new FileReader(documentoJson);
+        reader = Json.createReader(archivoAleer);
+        arrayJsonLeido = reader.readArray();
+
+        //2º unmarhalizamos el xml para ello creare una instancia de la clase donde tengo el metodo de unmarshalizar
+        CrearJson metodosJson = new CrearJson();
+        File documentoXML = new File(xml);
+        GestionJAXB gestion = new GestionJAXB(paquete);
+
+        JAXBElement unmarshal = metodosJson.unmarshalizar(documentoXML, paquete);
+
+        //3º pedimos el getValue que devuelve devuelve el modelo de contenido y los valores de atributo para este elementoy lo casteamos a Clientes
+        Clientes clientes = (Clientes) unmarshal.getValue();
+
+        /*ahora en el objeto clientes ya tenemos el "mapa" de las clases del xml desde el elemento raiz, es decir ese objeto contiene ya una lista de clientes.
+       por lo tanto solo hay que trabajar con ella teniendo el cuenta la posicion de los elementos */
+        //creo las listas y objetos necesarios para guardar la informacion.
+        //recorro el array que contiene la informacion del json
+        for (Iterator<JsonValue> iterator = arrayJsonLeido.iterator(); iterator.hasNext();) {
+            List<TipoDireccion> listaDirecciones = new ArrayList<>();
+            JsonObject cliente = (JsonObject) iterator.next();
+
+            //le digo que en la lista dirección me meta la lista que hay dentro del arrayJsonLeido que se llama o tiene de clave "direccion"
+            JsonArray direccion = cliente.getJsonArray("direccion");
+            if (direccion.size() > 0) {
+                //si en la lista de direcciones hay más de una:
+                for (Iterator<JsonValue> iteratorDire = direccion.iterator(); iteratorDire.hasNext();) {
+                    //recorro la lista y para cada elemento de la lista direcciones (que es una dirección) creo un JsonObject:
+                    JsonObject cadaDireccion = (JsonObject) iteratorDire.next();
+                    /*y en la lista que cree anteriormente de tipo <TipoDireccion> con los metodos de la gestion de jaxb creo la dirección o direcciones que luego
+                    añadiré al cliente. El metodo crearDirCliente devuelve una lista de tipo <TipoDireccion> y lo que hago es que para cada dirección le pido los
+                    datos con el nombre clave "calle", "ciudad"....*/
+                    listaDirecciones.add(gestion.crearDirCliente(cadaDireccion.getString("calle"),
+                            cadaDireccion.getString("ciudad"), cadaDireccion.getInt("cp"),
+                            cadaDireccion.getString("escalera"), cadaDireccion.getString("numero"), cadaDireccion.getInt("piso")));
+                }
+            }
+
+            gestion.annadirClienteDirs(clientes, cliente.getString("apellido1"),
+                    cliente.getString("apellido2"), listaDirecciones, cliente.getString("telefono"), "");
         }
-        return jaxbElement;
-    }
 
-    public Marshaller marshalizar(JAXBElement esquema) {
-        try {
-            m = jaxbCtx.createMarshaller();
-
-            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
-            m.marshal(jaxbElement, System.out);
-        } catch (JAXBException ex) {
-            Logger.getLogger(JsonToXML.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return m;
-    }
-
-    public JsonObjectBuilder crearDireccion(String calle, String numero, int piso, String escalera, int codigoPostal, String ciudad) {
-        JsonObjectBuilder direccion = Json.createObjectBuilder()
-                .add("calle", calle)
-                .add("numero", numero)
-                .add("piso", piso)
-                .add("escalera", escalera)
-                .add("cp", codigoPostal)
-                .add("ciudad", ciudad);
-        return direccion;
-    }
-
-    public JsonArrayBuilder crearListaDirecciones(List<JsonObjectBuilder> direcciones) {
-        JsonArrayBuilder listaDirecciones = Json.createArrayBuilder();
-        for (JsonObjectBuilder direccion : direcciones) {
-            listaDirecciones.add(direccion);
-        }
-        return listaDirecciones;
-    }
-
-    public JsonArrayBuilder crearArrayApellidos(String apellido1, String apellido2) {
-        JsonArrayBuilder apellidos = Json.createArrayBuilder()
-                .add(Json.createObjectBuilder()
-                        .add("apellido1", apellido1)
-                        .add("apellido2", apellido2)
-                );
-
-        return apellidos;
-    }
-
-    public JsonObject crearClienteConListaDirecciones(JsonArrayBuilder apellidos, JsonArrayBuilder direcciones, String telefono) {
-        JsonObject cliente = Json.createObjectBuilder()
-                .add("apellidos", Json.createArrayBuilder()
-                        .add(apellidos)
-                )
-                .add("direccion", direcciones)
-                .add("telefono", telefono)
-                .build();
-
-        return cliente;
-
-    }
-
-    public JsonArrayBuilder crearListaClientes(List<JsonObject> listaClientes) {
-        JsonArrayBuilder clientes = Json.createArrayBuilder();
-        for (JsonObject cliente : listaClientes) {
-            clientes.add(cliente);
-        }
-        return clientes;
-    }
-
-    public void crearFicheroJSONconArrayBuider(String rutaFichero, JsonArrayBuilder clientes) throws IOException {
-
-        JsonArray arrayJson = clientes
-                .build();
-        FileWriter ficheroSalida = new FileWriter(rutaFichero);
-        JsonWriter jsonWriter = Json.createWriter(ficheroSalida);
-        jsonWriter.writeArray(arrayJson);
-        ficheroSalida.flush();
-        ficheroSalida.close();
+        metodosJson.marshalizar(unmarshal);
 
     }
 

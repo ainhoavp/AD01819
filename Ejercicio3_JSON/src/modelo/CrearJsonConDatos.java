@@ -2,17 +2,15 @@ package modelo;
 
 import java.util.List;
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
 
 /**
  *
  * @author Ainhoa
  */
-public class Ejercicio_3 {
+public class CrearJsonConDatos {
 
     public JsonObjectBuilder crearDireccion(String calle, String numero, int piso, String escalera, int codigoPostal, String ciudad) {
         JsonObjectBuilder direccion = Json.createObjectBuilder()
@@ -34,13 +32,13 @@ public class Ejercicio_3 {
     }
 
     public JsonArrayBuilder crearArrayApellidos(String apellido1, String apellido2) {
-        JsonArrayBuilder apellidos = Json.createArrayBuilder()
-                .add(Json.createObjectBuilder()
-                        .add("apellido1", apellido1)
-                        .add("apellido2", apellido2)
-                );
-               
-        return apellidos;
+    JsonArrayBuilder apellidos = Json.createArrayBuilder()
+    .add(Json.createObjectBuilder()
+    .add("apellido1", apellido1)
+    .add("apellido2", apellido2)
+    );
+    
+    return apellidos;
     }
 
     public JsonObject crearClienteConListaDirecciones(JsonArrayBuilder apellidos, JsonArrayBuilder direcciones, String telefono) {
